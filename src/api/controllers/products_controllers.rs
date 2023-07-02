@@ -6,18 +6,41 @@ use crate::api::dtos::product_dtos::{
     CreateProductDto
 };
 
+use axum::extract::Extension;
+
 use crate::api::utils::result_entity::ResultEntity;
+use crate::services::product_service::ProductsService;
 
-pub async fn create_product(create_product_dto: Json<CreateProductDto>) -> Json<ResultEntity<ProductEntity>> {
-    let entity = ProductEntity{ 
-        id: 1,
-        name: create_product_dto.name.clone(),
-        description: create_product_dto.description.clone(),
-        price: create_product_dto.price.clone(),
-        brand: create_product_dto.brand.clone()
-    };
+pub async fn create_product(product_service: Extension<std::sync::Arc<ProductsService>>, create_product_dto: Json<CreateProductDto>) -> Json<ResultEntity<ProductEntity>> {
+    let entity = product_service.0.add_product(create_product_dto.0);
 
-    let result = ResultEntity::new(200, entity, true, vec![], vec![]);
+    let result: ResultEntity<ProductEntity>;
+
+    match entity {
+        Ok(val) => {
+            result = ResultEntity::new(200, Some(val), true, vec![], vec![]); 
+        }
+        Err(err) => {
+            result = ResultEntity::new(500, None, true, vec![], vec![]); 
+        }
+    }
+
+    return Json(result);
+}
+
+pub async fn find_products(product_service: Extension<std::sync::Arc<ProductsService>>) -> Json<ResultEntity<Vec<ProductEntity>>> {
+    let entity = product_service.0.find_products();
+
+    let result: ResultEntity<Vec<ProductEntity>>;
+
+    match entity {
+        Ok(val) => {
+            result = ResultEntity::new(200, Some(val), true, vec![], vec![]); 
+        }
+        Err(err) => {
+            result = ResultEntity::new(500, None, true, vec![], vec![]); 
+        }
+    }
 
     return Json(result);
 }

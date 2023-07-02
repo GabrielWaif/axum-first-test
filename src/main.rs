@@ -1,6 +1,8 @@
 mod api;
 mod server;
 mod domain;
+mod persistence;
+mod services;
 
 use server::server_manager::ServerManager;
 
