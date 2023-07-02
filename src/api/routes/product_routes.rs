@@ -1,4 +1,4 @@
-use axum::routing::{get, post};
+use axum::routing::post;
 use crate::api::routes::RouteMapper;
 use crate::api::controllers::products_controllers::{create_product, find_products};
 use crate::services::product_service::ProductsService;
@@ -13,8 +13,7 @@ impl RouteMapper for ProductRoutes {
         let products_service = std::sync::Arc::new(ProductsService::new());
 
         let router = router
-            .route("/products", post(create_product))
-            .route("/products", get(find_products))
+            .route("/products", post(create_product).get(find_products))
             .layer(axum::Extension(products_service));
         return router;
     }

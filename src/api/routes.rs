@@ -1,8 +1,10 @@
 mod product_routes;
 
-use crate::api::routes::product_routes::ProductRoutes;
+use crate::{api::routes::product_routes::ProductRoutes, ApiDoc};
 
 use axum::Router;
+use utoipa::OpenApi;
+use utoipa_swagger_ui::SwaggerUi;
 
 trait RouteMapper {
     fn map_routes(&self, router: Router) -> Router;
@@ -22,6 +24,7 @@ impl RouteManager {
     pub fn new() -> RouteManager {
         let mut router = Router::new();
         router = add_routes(router, ProductRoutes{});
+        router = router.merge(SwaggerUi::new("/swagger-ui").url("/api-doc/openapi.json", ApiDoc::openapi()));
         RouteManager { router }
     }
 

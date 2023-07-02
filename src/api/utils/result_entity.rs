@@ -1,6 +1,13 @@
 use serde::{Serialize, Deserialize};
+use utoipa::ToSchema;
 
-#[derive(Deserialize, Serialize)]
+use crate::domain::entities::product_entity::ProductEntity;
+
+#[derive(Deserialize, Serialize, ToSchema)]
+#[aliases(
+    ResultProductEntity = ResultEntity<ProductEntity>,
+    ResultProductEntities = ResultEntity<Vec<ProductEntity>>,
+)]
 pub struct ResultEntity<T> {
     pub status: i32,
     pub result: Option<T>,
